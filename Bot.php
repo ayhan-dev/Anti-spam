@@ -106,23 +106,10 @@ if (isset($update['message']) && $chat_type == "private") {
 
 
 
-if (isset($update['message']) && $chat_type == "supergroup") {
-//Chat Permissions [1]
- bot('setChatPermissions',[ 
-     'chat_id' =>$update['message']['chat']['id'], 
-     'permissions' => json_encode([
-        'can_send_messages'         => true,
-        'can_post_messages'         => true,
-        'can_add_web_page_previews' => false,
-        'can_send_other_messages'   => false,
-        'can_send_media_messages'   => false,
-        'can_change_info'           => false, 
-        'can_pin_messages'          => false, 
-        'can_invite_users'          => false
-                  ‌                 ])  
-     ]);
 
-//del mes [2]
+
+
+if (isset($update['message']) and $chat_type == "supergroup") {
 if($update['message']['new_chat_title']   or 
    $update['message']['new_chat_photo']   or 
    $update['message']['new_chat_member']  or 
@@ -134,29 +121,40 @@ if($update['message']['new_chat_title']   or
    $update['message']['sticker']          or
    $update['message']['video_note']       or
    $update['message']['forward_from']     or
-   $update['message']['animation']
-){ 
-  
-bot('deletemessage',[
-    'chat_id'    => $update['message']['chat']['id'],
-    'message_id' => $update['message']['message_id']  
+   $update['message']['animation']){
+ bot('deletemessage',[
+                   'chat_id'    => $update['message']['chat']['id'],
+                   'message_id' => $update['message']['message_id'] 
     ]);
 }
 
-//ban user [3]
+
 if(isset($update['message']['new_chat_member'])){ 
- 
-  bot('kickChatMember', [
-    'chat_id' => $chat_id,
-    'user_id' => $update['message']['new_chat_member']['id'],
-    'until_date' => time() + (32 * 24 * 60 * 60)
-]); 
-  
+    bot('kickChatMember', [
+                   'chat_id'    => $chat_id,
+                   'user_id'    => $update['message']['new_chat_member']['id'],
+                   'until_date' => time() + (32 * 24 * 60 * 60)
+        ]);
+}}
+
+
+if ($update['message']['new_chat_member']['id'] == $id){
+    bot('setChatPermissions', [
+            'chat_id'                       => $update['message']['chat']['id'],
+            'permissions'                   => json_encode([
+                'can_send_messages'         => true,
+                'can_post_messages'         => true,
+                'can_add_web_page_previews' => false,
+                'can_send_other_messages'   => false,
+                'can_send_media_messages'   => false,
+                'can_change_info'           => false,
+                'can_pin_messages'          => false,
+                'can_invite_users'          => false
+            ])
+    ]);
 }
 
-//checkSpamStatus($from_id,$chat_id);
-} 
 
 
-
+ //checkSpamStatus($userId,$chat);
 
